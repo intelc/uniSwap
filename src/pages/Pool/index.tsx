@@ -177,6 +177,32 @@ export default function Pool() {
     [[], []]
   ) ?? [[], []]
 
+  const [messages, setMessages] = useState<IMessage[]>([])
+
+  const click_receive = async () => {
+    let result
+    try {
+      console.log(account)
+      result = await (await axios.get(`http://localhost:4000/api/receive?to_address=${account}`)).data
+      console.log(result)
+    } catch (e) {}
+    return result
+  }
+
+  interface IMessage {
+    to_address: string
+    from_address: string
+    body: string
+    signature: string
+    date: string
+  }
+  const onReceive = async () => {
+    const result = await click_receive()
+    console.log(`received, ${result}`)
+
+    setMessages(result)
+  }
+
   const [notifications, setNotifications] = useState([
     {
       para: 'New Uniswap pair created: test 🦄Check out the new pool here: test ',
@@ -219,7 +245,7 @@ export default function Pool() {
                 <Trans>Notifications</Trans>
               </ThemedText.Body>
               <ButtonRow>
-                <ResponsiveButtonPrimary id="join-pool-button" as={Link} to="#">
+                <ResponsiveButtonPrimary id="join-pool-button" as={Link} to="#" onClick={onReceive}>
                   + <Trans>Get Alerts</Trans>
                 </ResponsiveButtonPrimary>
               </ButtonRow>
@@ -239,7 +265,7 @@ export default function Pool() {
                   {!showConnectAWallet && (
                     <>
                       <NotificationMapWrapper>
-                        {notifications.map((item, inex) => {
+                        {messages.map((item, inex) => {
                           return (
                             <NotificationBox key={inex}>
                               <div className="notiIcon">
@@ -247,9 +273,9 @@ export default function Pool() {
                               </div>
                               <NotiContent>
                                 <Time>
-                                  <ClockImage src={clock} alt="clock"></ClockImage> {item.time}
+                                  <ClockImage src={clock} alt="clock"></ClockImage> {item.date}
                                 </Time>
-                                <NotificationText>{item.para}</NotificationText>
+                                <NotificationText>{item.body}</NotificationText>
                               </NotiContent>
                             </NotificationBox>
                           )
