@@ -182,8 +182,8 @@ export default function Pool() {
   const click_receive = async () => {
     let result
     try {
-      console.log(account)
-      result = await (await axios.get(`http://localhost:4000/api/receive?to_address=${account}`)).data
+      // console.log(account)
+      result = await (await axios.get(`${process.env.REACT_APP_AZURE_ADDRESS}/api/receive?to_address=${account}&${process.env.REACT_APP_AZURE_CRED_RECEIVE}`)).data
       console.log(result)
     } catch (e) {}
     return result
